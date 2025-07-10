@@ -94,7 +94,7 @@ func (cfg *apiConfig) handlerUploadThumbnail(w http.ResponseWriter, r *http.Requ
 
 	err = cfg.db.UpdateVideo(video)
 	if err != nil {
-		respondWithError(w, http.StatusInternalServerError, "Couldn't updata thumbnail", err)
+		respondWithError(w, http.StatusInternalServerError, "Couldn't update thumbnail", err)
 		return
 	}
 
