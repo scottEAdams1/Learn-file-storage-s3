@@ -81,10 +81,23 @@ func (cfg *apiConfig) handlerUploadVideo(w http.ResponseWriter, r *http.Request)
 		respondWithError(w, http.StatusInternalServerError, "Couldn't reset file pointer", err)
 		return
 	}
+	ratio, err := getVideoAspectRatio(file.Name())
+	if err != nil {
+		respondWithError(w, http.StatusInternalServerError, "Couldn't get video aspect ratio", err)
+		return
+	}
+	prefix := "other/"
+	if ratio == "16:9" {
+		prefix = "landscape/"
+	}
+	if ratio == "9:16" {
+		prefix = "portrait/"
+	}
 
 	key := make([]byte, 32)
 	rand.Read(key)
 	fileName := hex.EncodeToString(key)
+	fileName = prefix + fileName
 
 	_, err = cfg.s3Client.PutObject(r.Context(), &s3.PutObjectInput{
 		Bucket:      aws.String(cfg.s3Bucket),
